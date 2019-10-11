@@ -53,23 +53,26 @@ Crea un módulo (preferiblemente MJS) que haga las siguientes tareas:
 Ejemplo:
 
 __Input__
-.workspace
-+-- ejercicio1
-|   +-- node_modules
-|   +-- images
-|       +-- imagen1.jpg
-|   +-- main.js
-|   +-- package.json
-
+```
+workspace
+|-- ejercicio1
+    |-- node_modules
+    |-- images
+        |-- imagen1.jpg
+    |-- main.js
+    |-- package.json
+```
     
 __Output__:
-
-.workspace.tar.gz
-+-- ejercicio1
-|   +-- images
-|       +-- imagen1.jpg
-|   +-- main.js
-|   +-- package.json
+```
+workspace.tar.gz
+|-- ejercicio1
+    |-- node_modules
+    |-- images
+        |-- imagen1.jpg
+    |-- main.js
+    |-- package.json
+```
 
 __Bonus Track__
 
