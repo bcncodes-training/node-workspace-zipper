@@ -43,26 +43,30 @@ __Tareas__
 
 Crea un módulo (preferiblemente MJS) que haga las siguientes tareas:
 1. Recorre el árbol de directorios
-2. Si encuentra un archivo lo comprime y lo añade al fichero `tar`.
+2. Si encuentra un archivo lo añade a un array de ficheros para comprimir.
 3. Si encuentra un directorio comprueba que no sea el directorio `node_modules`. 
 4. Si lo es busca el siguiente elemento dentro del árbol
-5. Si no es `node_modules` lee los elementos del directorio, los comprime y los añade al fichero `tar`.
+5. Si no es `node_modules` lee los elementos del directorio, los añade al array.
 6. El proceso se ejecuta recursivamente hasta que no queda ningún elemento por leer dentro del directorio.
 7. Una vez completadas las tareas se comprime el fichero `tar` a `tar.gz`.
 
 Ejemplo:
 
 __Input__
+.workspace
+├── _ejercicio1
+|   ├── _node_modules
+|   ├── _images
+|       ├── imagen1.jpg
+|   ├── main.js
+|   └── package.json
 
--workspace
- |_ejercicio1
-    |_node_modules
-    |_main.js
-    |_package.json
     
 __Output__:
 
-  workspace.tar.gz
-    |_ejercicio1
-      |_main.js.gz
-      |_package.json.gz
+.workspace.tar.gz
+├── _ejercicio1
+|   ├── _images
+|       ├── imagen1.jpg
+|   ├── main.js
+|   └── package.json
