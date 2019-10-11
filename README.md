@@ -54,19 +54,23 @@ Ejemplo:
 
 __Input__
 .workspace
-├── _ejercicio1
-|   ├── _node_modules
-|   ├── _images
-|       ├── imagen1.jpg
-|   ├── main.js
-|   └── package.json
++-- ejercicio1
+|   +-- node_modules
+|   +-- images
+|       +-- imagen1.jpg
+|   +-- main.js
+|   +-- package.json
 
     
 __Output__:
 
 .workspace.tar.gz
-├── _ejercicio1
-|   ├── _images
-|       ├── imagen1.jpg
-|   ├── main.js
-|   └── package.json
++-- ejercicio1
+|   +-- images
+|       +-- imagen1.jpg
+|   +-- main.js
+|   +-- package.json
+
+__Bonus Track__
+
+Generar el método para descompromir el fichero y recrear el árbol de directorios.
