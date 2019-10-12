@@ -16,6 +16,10 @@ git checkout "pair"+numero
   - fichero con el módulo que genera el zipper --- `zipper.js`
   - fichero __readme.md__ con las instrucciones de uso del módulo
 
+  > Ejecucion:
+  node --experimental-modules zipper.mjs
+
+
 4. sube los cambios:
 ```script
   git add .
@@ -77,3 +81,6 @@ workspace.tar.gz
 __Bonus Track__
 
 Generar el método para descompromir el fichero y recrear el árbol de directorios.
+
+// Necesario instalar
+npm i tar
