@@ -1,57 +1,82 @@
-/*
-Ejercicio 7
-Recorrer un directorio manejando la respuesta de si es un fichero o un directorio con promesas.
+/*Tareas
 
-Si es un fichero concatenar el nombre del fichero al directorio
-Si es un directorio volver a invocar a la función.
-Obtener el resultado por consola.
+Crea un módulo (preferiblemente MJS) que haga las siguientes tareas:
+
+Recorre el árbol de directorios
+Si encuentra un archivo lo añade a un array de ficheros para comprimir.
+Si encuentra un directorio comprueba que no sea el directorio node_modules.
+Si lo es busca el siguiente elemento dentro del árbol
+Si no es node_modules lee los elementos del directorio, los añade al array.
+El proceso se ejecuta recursivamente hasta que no queda ningún elemento por leer dentro del directorio.
+Una vez completadas las tareas se comprime el fichero tar a tar.gz.
+Ejemplo:
+
+Input
+
+workspace
+|-- ejercicio1
+    |-- node_modules
+    |-- images
+        |-- imagen1.jpg
+    |-- main.js
+    |-- package.json
 */
+
 import fs from 'fs';
 import tar from 'tar';
 import zlib from 'zlib';
 
-const filDir = fs.statSync('./zipper.mjs');
-//Archivo o Directorio
-const lDir = fs.readdirSync('../');
+//Ruta total : ruta = process.cwd();
+//Ruta del WorkSpace
+let ruta = '../';
+let ficheros = [];
 
-//readFileSync(ruta, options);
+let getFiles = function(ruta, ficheros){
+    
+    fs.readdirSync(ruta).forEach(function(archivo){
 
-//Archivo? Si archivo y ! no_modules - comprime o Array 
+    if (archivo!=="node_modules"){
+        
+            var subruta = ruta + '/' + archivo;
+        //lstatSync
+        //if((fs.statSync(subruta).isDirectory())&&(archivo!=="node_modules")){
+        if(fs.statSync(subruta).isDirectory()){
+            //console.log('*: '+path+'\n\n\r');
+            getFiles(subruta, ficheros);
+        } else {
+            ficheros.push(ruta + '/' + archivo);
 
-console.log(filDir.isFile());
+            
+                tar.create(
+                {
+                    gzip: false,
+                    file: 'my-workSpace.tar'
+                },
+                ficheros
+                //['some', 'files', 'and', 'folders'] -->array de archivos con ruta
+                )//.then(_ => { .. tarball has been created .. })
+                .then(fs.createWriteStream('my-workSpace.tar'))
+                .catch(error => console.log(error.message));
 
-//Leer archivos o Directorios en Workspace
-console.log(lDir);
+           //     tar.x(options, fileList, callback) [alias: tar.extract]
+           //     Extract a tarball archive.
+           
+           fs.createReadStream('my-workSpace.tar')
+            .pipe(zlib.createGzip())
+            .pipe(fs.createWriteStream('ws.gz'));
+            console.log("Archivo Comprimido: "+ruta + '/' + archivo); 
+            /**/
+        }
+    } else {console.log(`Not attached: Current directory: ${archivo} in ${ruta}`);}
+    });     
+};
 
-// Funcion recursiva  - ForEach que vuelva a repetirse de 
-//detetar directorio - recoger array de archivos - rutas --> tar 
+getFiles(ruta, ficheros);
+//console.log(ficheros);// will log all files in directory
 
-/* 
-tar.create(
-  {
-    gzip: <true|gzip options>,
-    file: 'my-tarball.tgz'
-  },
-  ['some', 'files', 'and', 'folders']-->array de archivos con ruta
-)//.then(_ => { .. tarball has been created .. })
-.pipe(fs.createWriteStream('my-tarball.tgz'))
-
-tar.x(options, fileList, callback) [alias: tar.extract]
-Extract a tarball archive.
-
-The fileList is an array of paths to extract from the tarball. If no paths are provided, then all the entries are extracted.
-
-If the archive is gzipped, then tar will detect this and unzip it.
-
-
-/* COMPRESION Gz de un archivo * /
-fs.createReadStream('./zipper.mjs')
-  .pipe(zlib.createGzip())
-  .pipe(fs.createWriteStream('zipper.mjs.gz'));
-console.log("File Compressed."); */
-
-/* COMPRESION Gz de un workspace.tar */
+/* COMPRESION Gz de un workspace.tar * /
 fs.createReadStream('./workspace.tar')
   .pipe(zlib.createGzip())
   .pipe(fs.createWriteStream('workspace.tar.gz'));
 console.log("WorkSpace Compressed.");
+*/
