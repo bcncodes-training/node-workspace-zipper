@@ -85,6 +85,7 @@ Generar el método para descompromir el fichero y recrear el árbol de directori
 // Necesario instalar
 npm i tar
 
+/* V2 Resultado consola:
 
 
 /* Resultado Consola

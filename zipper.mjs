@@ -52,7 +52,7 @@ let getFiles = function(ruta, ficheros){
                 tar.create(
                 {
                     gzip: false,
-                    file: 'my-workSpace.tar'
+                    file: '../../my-workSpace.tar'
                 },
                 ficheros )//.then(_ => { .. tarball has been created .. })->fuera de Workspace
                 .then(fs.createWriteStream('../../my-workSpace.tar'))
