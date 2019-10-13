@@ -87,8 +87,18 @@ npm i tar
 
 /* V2 Resultado consola:
 
+C:\CIFO-MS3\workspace\node-workspace-zipper> node --experimental-modules zipper.mjs
+(node:17160) ExperimentalWarning: The ESM module loader is experimental.
+Not attached: Current directory: node_modules in ..//conexion-mongo
+Not attached: Current directory: node_modules in ..//ejEmitterListener
+Not attached: Current directory: node_modules in ..//ejercicio1
+Not attached: Current directory: node_modules in ..//node-workspace-zipper
+Not attached: Current directory: node_modules in ..//prueba-chalk
+Not attached: Current directory: node_modules in ..//prueba-node
+WorkSpace Compressed.
 
-/* Resultado Consola
+
+/* Resultado Consola Anterior
 
 PS C:\CIFO-MS3\workspace\node-workspace-zipper> node --experimental-modules zipper.mjs
 (node:20948) ExperimentalWarning: The ESM module loader is experimental.
