@@ -33,39 +33,35 @@ let ficheros = [];
 
 let getFiles = function(ruta, ficheros){
     
+    //Recorremos el directorio WS por cada presunto archivo (archivo/directorio)
     fs.readdirSync(ruta).forEach(function(archivo){
 
+    //No nos interesa recoger la ruta si node_modules
     if (archivo!=="node_modules"){
         
             var subruta = ruta + '/' + archivo;
-        //lstatSync
-        //if((fs.statSync(subruta).isDirectory())&&(archivo!=="node_modules")){
+       
         if(fs.statSync(subruta).isDirectory()){
-            //console.log('*: '+path+'\n\n\r');
-            getFiles(subruta, ficheros);
+            
+            getFiles(subruta, ficheros); //-->Recursivo: volvemos a revisar sus archvs dentro l.34
         } else {
+            //Lo anotamos en nuestro array de ficheros
             ficheros.push(ruta + '/' + archivo);
 
-            
+                //Creamos el archivo comprimible tar con los ficheros de nuestro array
                 tar.create(
                 {
                     gzip: false,
                     file: 'my-workSpace.tar'
                 },
-                ficheros
-                //['some', 'files', 'and', 'folders'] -->array de archivos con ruta
-                )//.then(_ => { .. tarball has been created .. })
-                .then(fs.createWriteStream('my-workSpace.tar'))
+                ficheros )//.then(_ => { .. tarball has been created .. })->fuera de Workspace
+                .then(fs.createWriteStream('../../my-workSpace.tar'))
                 .catch(error => console.log(error.message));
 
            //     tar.x(options, fileList, callback) [alias: tar.extract]
            //     Extract a tarball archive.
            
-           fs.createReadStream('my-workSpace.tar')
-            .pipe(zlib.createGzip())
-            .pipe(fs.createWriteStream('ws.gz'));
-            console.log("Archivo Comprimido: "+ruta + '/' + archivo); 
-            /**/
+           
         }
     } else {console.log(`Not attached: Current directory: ${archivo} in ${ruta}`);}
     });     
@@ -74,9 +70,9 @@ let getFiles = function(ruta, ficheros){
 getFiles(ruta, ficheros);
 //console.log(ficheros);// will log all files in directory
 
-/* COMPRESION Gz de un workspace.tar * /
-fs.createReadStream('./workspace.tar')
+/* COMPRESION Gz de mi workspace.tar */
+fs.createReadStream('../../my-workSpace.tar')
   .pipe(zlib.createGzip())
-  .pipe(fs.createWriteStream('workspace.tar.gz'));
+  .pipe(fs.createWriteStream('../../workspace.tar.gz'));
 console.log("WorkSpace Compressed.");
-*/
+
