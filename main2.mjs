@@ -1,50 +1,113 @@
 import fs from 'fs';
-import tar from 'tar';
-let ruta = '../';
+// import tar from 'tar';
+// import zlib from 'zlib'; 
+
+
 let stat;
 let direcc;
-let arrayResultado = [];
-let arrayDefinitivo=[];
-let temp;
-function lectura(elementoRuta){
-   direcc = fs.readdirSync(elementoRuta);
-   direcc.forEach(element => {
-       stat = fs.statSync(elementoRuta+element);
-       temp=elementoRuta+element;
-       if (element!="node_modules") arrayResultado.push({direccion:temp, valor: stat.isDirectory()}
-   );
-});
+let arrayResultado = [{}];
+let arrayTemp = [];
+
+const PROMESA = new Promise((resolve, rejected)=>{
+    
+    let arrayFicheros = [];
+    let arrayDirectorios = []; 
+
+let recursiva = (ruta = "./")=>{
+   fs.readdirSync(ruta).forEach(element => {   
+    if (fs.statSync(element).isDirectory() === false){      
+    arrayFicheros.push(ruta+element)       
+    }    
+    
+    if (fs.statSync(element).isDirectory() === true && element != "node_modules"){
+        
+        rejected(arrayDirectorios.push("/"+element))
+
+        // ruta = "./" + element + "/";
+    
+        // console.log("if TRUE RUTA:" + "./" + element + "/")
+        // console.log("if true valor archivo: " + fs.readdirSync(ruta+element))
+    }      
+}); 
 }
-function subir(e){
-   e.forEach(element=>{
-       if(element.valor){
-/*             arrayResultado.forEach(elemento2=>{
-               if(elemento2.direccion==element.direccion){
-                   elemento2.valor=false;
-               }
-           }) */
-           lectura(element.direccion+"/");
-       };
-   })
-/*     arrayResultado.forEach(element3=>{
-       if(element3.value==true){
-           subir(arrayResultado);
-       }
-   }) */
-}
-function empaquetar(arrayEmpaquetar){
-   arrayEmpaquetar.forEach(element => {
-       arrayDefinitivo.push(element.direccion);
-   });
-   tar.create(
-       {
-         gzip: true,
-         noDirRecurse: true,
-         file: 'destino.tar'
-       },
-       arrayDefinitivo
-     )
-}
-lectura(ruta);
-subir(arrayResultado);
-empaquetar(arrayResultado);
+
+recursiva()    
+resolve(arrayFicheros)/* array.push */
+
+
+})
+.then((e)=>console.log(e),
+(i)=>console.log(i))
+
+// .then((ficheros) =>{
+//     console.log(ficheros),
+//     (directorios) =>{
+//         console.log(directorios)}
+// })
+
+
+// function lectura(){
+// let test
+// let ruta ="./"
+// let array = []
+//     test = fs.readdirSync("./");
+//     // console.log(test)
+//     // test.forEach(element => {console.log(element)})
+        
+//     let recursiva = (ruta)=>{
+
+//         fs.readdirSync(ruta).forEach(element => {
+                
+//         if (fs.statSync(element).isDirectory() === false){
+//             array.push(ruta+element)
+//         }
+
+//         ()=>{
+//              if (fs.statSync(element).isDirectory() === true && element != "node_modules"){
+//                 (param = "./")=>{
+//                     ruta = param + element
+//                 }
+//                 recursiva ()
+//                 // ruta = "./" + element + "/";
+            
+//                 // console.log("if TRUE RUTA:" + "./" + element + "/")
+//                 // console.log("if true valor archivo: " + fs.readdirSync(ruta+element))
+//         }
+//         }
+       
+//     })      
+//     ;
+//     }
+//     recursiva(ruta)
+
+// console.log(array)
+
+// }
+
+
+// lectura();
+
+//     let ruta;
+//     direcc = fs.readdirSync(ruta);
+//     direcc.forEach(element => {
+//         stat = fs.statSync(ruta+element);
+
+
+
+
+//         //console.log(element + '    ' + stat.isDirectory())
+//         arrayResultado.push({direccion:element, valor: stat.isDirectory()}
+//         );
+//     }); 
+// }
+
+// arrayResultado.forEach(element => {
+//     if (element.valor && element.direccion != "node_modules"){
+//         console.log(element)
+// }else{
+
+// }
+// });    
+
+
+
