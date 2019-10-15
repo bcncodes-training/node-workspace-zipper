@@ -9,7 +9,7 @@ const mostrarAjuda = () => {
 }
 
 // Configuració
-const EXTENSIO = '.gz';
+const EXTENSIO = '.tgz';
 const FITXER_DESTI_DEFAULT = 'tarball';
 const DIRECTORI_DESTI_DEFAULT = './';
 

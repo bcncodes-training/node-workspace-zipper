@@ -1,11 +1,12 @@
 import fs from 'fs';
-import util from 'util';
-import zlib from 'zlib';
 import path from 'path';
+import util from 'util';
+import tar from 'tar';
+import chalk from 'chalk';
 
-const fitxersExclosos = ['node_modules'];
+const fitxersExclosos = ['node_modules', '.git'];
 
-const lecturaDirectoris = util.promisify (fs.readdir);	
+const obtenirFitxersDirectori = util.promisify (fs.readdir);
 const tipusFitxer = util.promisify (fs.stat);
 
 const lecturaFitxer = util.promisify (fs.readFile);
@@ -14,91 +15,88 @@ const escripturaFitxer = util.promisify (fs.writeFile);
 const fitxerExisteix = util.promisify (fs.access);
 const crearDirectori = util.promisify (fs.mkdir);
 
-const directoriFitxerDades = '/tmp/gzipper-dades/'
-
 export class Gzipper
-{	
+{
 	directori;
 	dadesFitxers;
 	
-	constructor(directori)
+	constructor (directori)
 	{
 		this.directori = directori;
 		this.dadesFitxers = [];
 	}
 	
-	async llegeixDirectoris () 
-	{
-		const nomFitxers = await lecturaDirectoris (this.directori);
+	async llegeixDirectoris (directori)
+	{	
+		const nomFitxers = await obtenirFitxersDirectori (directori);
 		
 		for (let fitxer of nomFitxers)
 		{
-			if (fitxersExclosos.includes (fitxer))	continue;
+			if (fitxersExclosos.includes (fitxer)) continue;
 			
-			fitxer = `${this.directori}/${fitxer}`;
+			fitxer =  `${directori}/${fitxer}`;
+					
+			console.log (chalk.blue("Fitxer llegit: ") + fitxer);
 			
 			const fitxerTipus = await tipusFitxer (fitxer);
 			
-			if (fitxerTipus.isFile())
-			{
-				let document =
-				{
-					"ruta" : `${fitxer}`,
-					"dades" : fs.readFileSync (fitxer)			
-				};
-				
-				this.dadesFitxers.push (document);
+			if (fitxerTipus.isDirectory()) {
+				this.llegeixDirectoris (fitxer);
+			} else {
+				this.dadesFitxers.push (fitxer);
 			}
 			
-			if (fitxerTipus.isDirectory()) this.llegeixDirectoris (fitxer);	
+		}
+	}
+	
+	async creaNouDirectoriPosiciona()
+	{
+		/*
+		 * Intentem crear el directori destí i hi ens desplacem
+		 * Si existeix, no el crea.
+		 */
+		try {
+			await crearDirectori (this.directori, {recursive:true});
+			process.chdir (this.directori);
+		} catch (err) {
+			return console.error (err);
 		}
 	}
 	
 	async comprimeixDirectoris (fitxerDesti)
 	{
-		await this.llegeixDirectoris (this.directori);
+		this.dadesFitxers = [];
+		let fitxerDestiPathAbsolut = path.resolve (fitxerDesti);
 		
-		try {
-			await escripturaFitxer (fitxerDesti, zlib.gzipSync (JSON.stringify (this.dadesFitxers)));
-			console.log (`Fitxer correctament creat: ./${fitxerDesti}`);
-		} catch (err) {
-			console.error (err);
-		}
+		await this.creaNouDirectoriPosiciona();
+		
+		await this.llegeixDirectoris ('.').then(async () => {
+			this.dadesFitxers.forEach (fitxer => {
+				console.log (fitxer);
+			})
+			
+			try {
+				await tar.c ({gzip: true, file: fitxerDestiPathAbsolut}, this.dadesFitxers)
+					.then(_ => console.log (chalk.yellow(`Fitxers comprimits a: ${fitxerDesti}`)));
+			} catch (err) {
+				return console.error (err);
+			}	
+		});
+		
+		
 	}
 	
 	async descomprimeixDirectoris (fitxerOrigen)
-	{	
+	{
 		let fitxerOrigenPathAbsolut = path.resolve (fitxerOrigen);
-
-		// Intentem crear el directori destí i hi ens hi movem
-		try
-		{
-			await crearDirectori (this.directori, {recursive: true});
-			process.chdir (this.directori);
-		} catch (err) {
-			console.error(err);
-		}
-
-		try
-		{
-			let dades = await lecturaFitxer (fitxerOrigenPathAbsolut);
-			this.dadesFitxers = JSON.parse (zlib.gunzipSync (dades));
-		}
-		catch (error)
-		{
-			return console.error (error);
-		}
 		
-		this.dadesFitxers.forEach (fitxer => {
-			let bufferDades = Buffer.from (fitxer.dades.data);
-			let rutaFitxer = fitxer.ruta;
-
-/*
-			if (fitxerExisteix (fitxer.ruta, fs.F_OK))
-				rutaFitxer += ".copia";
-*/			
-			escripturaFitxer (rutaFitxer, bufferDades).
-				then (() => {console.log (`Restablert fitxer: ${rutaFitxer}`)});
-		});
+		await this.creaNouDirectoriPosiciona();
+		
+		try {
+			await tar.x ({file: fitxerOrigenPathAbsolut})
+				.then (_ => console.log (chalk.yellow (`Fitxer descomprimit: ${fitxerOrigenPathAbsolut}`)));
+		} catch (err) {
+			return console.error (err);
+		}
 	}
 };
