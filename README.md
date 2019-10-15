@@ -82,12 +82,18 @@ __Bonus Track__
 
 Generar el método para descompromir el fichero y recrear el árbol de directorios.
 
-// Necesario instalar
+// Necesario instalar para el Zipper
 npm i tar
 
-/* V2 Resultado consola:
+//Necesario instalar para el Unzipper
+npm i tar-fs
+
+
+
+/*  Resultado consola:
 
 C:\CIFO-MS3\workspace\node-workspace-zipper> node --experimental-modules zipper.mjs
+
 (node:17160) ExperimentalWarning: The ESM module loader is experimental.
 Not attached: Current directory: node_modules in ..//conexion-mongo
 Not attached: Current directory: node_modules in ..//ejEmitterListener
