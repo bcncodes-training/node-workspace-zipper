@@ -24,7 +24,7 @@ workspace
 
 import fs from 'fs';
 import tar from 'tar';
-import zlib from 'zlib';
+
 
 //Ruta total : ruta = process.cwd();
 //Ruta del WorkSpace
@@ -51,7 +51,7 @@ let getFiles = function(ruta, ficheros){
                 //Creamos el archivo comprimible tar con los ficheros de nuestro array
                 tar.create(
                 {
-                    gzip: false,
+                    gzip: true,
                     file: '../../my-workSpace.tar'
                 },
                 ficheros )//.then(_ => { .. tarball has been created .. })->fuera de Workspace
@@ -70,9 +70,4 @@ let getFiles = function(ruta, ficheros){
 getFiles(ruta, ficheros);
 //console.log(ficheros);// will log all files in directory
 
-/* COMPRESION Gz de mi workspace.tar */
-fs.createReadStream('../../my-workSpace.tar')
-  .pipe(zlib.createGzip())
-  .pipe(fs.createWriteStream('../../workspace.tar.gz'));
-console.log("WorkSpace Compressed.");
 
